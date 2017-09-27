@@ -58,7 +58,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/ueventd.mt6580.rc:root/ueventd.mt6580.rc
 
 #RIL Hack
-RIL_HACK := yes
+RIL_HACK := no
+
+PRODUCT_PACKAGES += \
+	libccci_util
 
 ifeq ($(RIL_HACK),yes)
 PRODUCT_COPY_FILES += \
