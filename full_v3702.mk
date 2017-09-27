@@ -22,3 +22,6 @@ PRODUCT_NAME := full_v3702
 PRODUCT_BRAND := BQ
 PRODUCT_MODEL := BQS-5020
 PRODUCT_MANUFACTURER := BQ
+
+# set locales & aapt config.
+PRODUCT_LOCALES := en_US ru_RU uk_UA

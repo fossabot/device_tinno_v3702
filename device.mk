@@ -112,6 +112,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PACKAGES += \
     YGPS
 
+PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=8
+
 # Inherit the rest from mt6580-common
 $(call inherit-product, device/tinno/v3702/mt6580-common/mt6580.mk)
 $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
