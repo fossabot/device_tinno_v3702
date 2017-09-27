@@ -9,5 +9,5 @@ git apply -v ../../device/tinno/v3702/patches/hardware_libhardware.patch
 cd ../../system/core
 git apply -v ../../device/tinno/v3702/patches/system_core.patch
 git apply -v ../../device/tinno/v3702/patches/system_core2.patch
-#cd ../netd
-#git apply -v ../../device/tinno/v3702/patches/system_netd.patch
+cd ../../frameworks/base
+git apply -v ../../device/tinno/v3702/patches/key.patch
