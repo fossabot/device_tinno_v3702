@@ -234,17 +234,21 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
     ro.allow.mock.location=1 \
     ro.debuggable=1 \
     ro.adb.secure=0 \
-    persist.service.acm.enable=0 \
+    persist.service.acm.enable=1 \
     ro.oem_unlock_supported=1 \
     ro.mount.fs=EXT4 \
-    camera.disable_zsl_mode=1
+    camera.disable_zsl_mode=1 \
+    persist.mtk.aee.aed=on
     
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.kernel.android.checkjni=0 \
     ro.telephony.ril_class=MT6580 \
-    ro.telephony.ril.config=fakeiccid \
-    ro.com.android.mobiledata=false
+    ro.telephony.ril.config=signalstrength  \
+    ro.com.android.mobiledata=false \
+    persist.call_recording.enabled=true \
+    persist.call_recording.src=1 \
+    persist.debug.wfd.enable=1
     
 # Sensors
 PRODUCT_COPY_FILES += \
