@@ -57,3 +57,8 @@ USE_MINIKIN := true
 
 # Configure jemalloc for low memory
 MALLOC_SVELTE := true
+
+# Include needed symbols
+TARGET_INCLUDE_XLOG_SYMBOLS := false
+TARGET_INCLUDE_RIL_SYMBOLS := true
+include $(DEVICE_PATH)/symbols.mk
