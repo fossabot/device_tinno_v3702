@@ -1,5 +1,5 @@
-rild.libpath=/system/vendor/lib/mtk-ril.so
-rild.libargs=-d /dev/ttyC0 --
+rild.libpath=mtk-ril.so
+rild.libargs=-d /dev/ttyC0 
 
 
 # MTK, Infinity, 20090720 {
