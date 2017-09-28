@@ -54,3 +54,33 @@ allow init debugfs_dynamic_debug:file write;
 # Purpose : enable modules capability
 allow init self:capability sys_module;
 allow init kernel:system module_request;
+
+# new
+allow init debugfs:file write;
+allow init default_android_service:service_manager add;
+allow init fuse:dir add_name;
+allow init fuse:dir open;
+allow init fuse:dir read;
+allow init fuse:dir remove_name;
+allow init fuse:dir search;
+allow init fuse:dir write;
+allow init fuse:file append;
+allow init fuse:file create;
+allow init fuse:file getattr;
+allow init fuse:file open;
+allow init fuse:file read;
+allow init fuse:file unlink;
+allow init graphics_device:chr_file ioctl;
+allow init init:netlink_socket bind;
+allow init init:netlink_socket create;
+allow init init:netlink_socket read;
+allow init init:netlink_socket setopt;
+allow init init:netlink_socket write;
+allow init mnt_user_file:lnk_file read;
+allow init servicemanager:binder call;
+allow init servicemanager:binder transfer;
+allow init storage_file:lnk_file read;
+allow init stpwmt_device:chr_file write;
+allow init system_data_file:sock_file write;
+allow init system_file:file execute_no_trans;
+allow init tmpfs:lnk_file create;

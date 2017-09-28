@@ -12,3 +12,9 @@ allow fsck persist_block_device:blk_file rw_file_perms;
 allow fsck nvcfg_block_device:blk_file rw_file_perms;
 allow fsck odm_block_device:blk_file rw_file_perms;
 allow fsck oem_block_device:blk_file rw_file_perms;
+
+# new
+allow fsck block_device:blk_file ioctl;
+allow fsck block_device:blk_file open;
+allow fsck block_device:blk_file read;
+allow fsck block_device:blk_file write;

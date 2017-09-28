@@ -21,3 +21,9 @@ allow tune2fs block_device:dir search;
 
 # Read /proc/swaps.
 allow tune2fs proc:file r_file_perms;
+
+# new
+allow tune2fs block_device:blk_file ioctl;
+allow tune2fs block_device:blk_file open;
+allow tune2fs block_device:blk_file read;
+allow tune2fs block_device:blk_file write;
