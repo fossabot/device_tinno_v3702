@@ -110,3 +110,6 @@ allow rilproxy sysfs_ccci:file r_file_perms;
 
 allow init socket_device:sock_file { create unlink setattr };
 
+# new
+allow rilproxy mtkrild:unix_stream_socket connectto;
+

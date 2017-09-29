@@ -119,3 +119,7 @@ allow system_server proc_ged:file {open read write ioctl getattr};
 # Date : WK16.36
 # Purpose: Allow to set property log.tag.WifiHW to control log level of WifiHW
 allow system_server log_tag_prop:property_service set;
+
+# new
+allow system_server dex2oat_exec:file execute;
+allow system_server dex2oat_exec:file execute_no_trans;
