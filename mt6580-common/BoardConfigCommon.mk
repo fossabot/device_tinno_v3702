@@ -166,5 +166,5 @@ BOARD_SEPOLICY_DIRS := \
        $(COMMON_PATH)/sepolicy
 
 # Seccomp Filter
-BOARD_SEPOLICY_DIRS += \
+BOARD_SECCOMP_POLICY += \
        $(COMMON_PATH)/seccomp
