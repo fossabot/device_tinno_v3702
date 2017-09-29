@@ -65,3 +65,12 @@ MALLOC_SVELTE := true
 TARGET_INCLUDE_XLOG_SYMBOLS := false
 TARGET_INCLUDE_RIL_SYMBOLS := true
 include $(DEVICE_PATH)/symbols.mk
+
+# Deodex ? = false
+ODEX := true
+
+ifeq ($(ODEX),true)
+    WITH_DEXPREOPT := true
+    DISABLE_DEXPREOPT := false
+endif
+
