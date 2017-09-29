@@ -35,6 +35,7 @@ import android.telephony.TelephonyManager;
 
 import com.android.internal.telephony.MtkEccList;
 
+
 /**
  * Custom wrapper for MTK requests
  *
@@ -55,14 +56,16 @@ public class MT6580 extends RIL implements CommandsInterface {
     private static final int RIL_REQUEST_EMERGENCY_DIAL = 2087;
     private static final int RIL_REQUEST_SET_ECC_SERVICE_CATEGORY = 2088;
     private static final int RIL_REQUEST_SET_ECC_LIST = 2089;
+    private static final int REFRESH_SESSION_RESET = 6;      /* Session reset */
 
     private int[] dataCallCids = { -1, -1, -1, -1, -1 };
 
     //private Context mContext;
     private TelephonyManager mTelephonyManager;
     private MtkEccList mEccList;
+    
 
-    public MT6580(Context context, int preferredNetworkType, int cdmaSubscription) {
+   public MT6580(Context context, int preferredNetworkType, int cdmaSubscription) {
         super(context, preferredNetworkType, cdmaSubscription, null);
         //mContext = context;
         Rlog.i("MT6580", "Ctor1: context is " + mContext);
@@ -95,9 +98,9 @@ public class MT6580 extends RIL implements CommandsInterface {
     }
 
 
-    
+    @Override
     protected void
-    processUnsolicited (Parcel p) {
+    processUnsolicited (Parcel p, int type) {
         Object ret;
         int dataPosition = p.dataPosition(); // save off position within the Parcel
         int response = p.readInt();
@@ -113,7 +116,7 @@ public class MT6580 extends RIL implements CommandsInterface {
                 // Rewind the Parcel
                 p.setDataPosition(dataPosition);
                 // Forward responses that we are not overriding to the super class
-                //super.processUnsolicited(p);
+                super.processUnsolicited(p, type);
                 return;
         }
         switch(response) {
@@ -217,7 +220,7 @@ public class MT6580 extends RIL implements CommandsInterface {
         return response;
     }
 
-    
+    @Override
     public void setInitialAttachApn(String apn, String protocol, int authType, String username,
             String password, Message result) {
         RILRequest rr = RILRequest.obtain(RIL_REQUEST_SET_INITIAL_ATTACH_APN, null);
@@ -247,11 +250,11 @@ public class MT6580 extends RIL implements CommandsInterface {
     responseSetAttachApn(Parcel p) {
         // The stack refuses to attach to LTE unless an IA APN was set, and
         // will loop until it happens. Set an empty one to unblock.
-        setInitialAttachApn("","",0,"","",null);
+       setInitialAttachApn("","",0,"","",null);        
         return null;
     }
 
-    
+    @Override
     protected Object
     responseSimRefresh(Parcel p) {
         IccRefreshResponse response = new IccRefreshResponse();
@@ -260,14 +263,21 @@ public class MT6580 extends RIL implements CommandsInterface {
         String rawefId = p.readString();
         response.efId   = rawefId == null ? 0 : Integer.parseInt(rawefId);
         response.aid = p.readString();
+        if (response.refreshResult > IccRefreshResponse.REFRESH_RESULT_RESET) {
+            if (response.refreshResult == REFRESH_SESSION_RESET) {
+                response.refreshResult = IccRefreshResponse.REFRESH_RESULT_RESET;
+            } else {
+                response.refreshResult = IccRefreshResponse.REFRESH_RESULT_INIT;
+            }
+        }
 
         return response;
     }
 
-    
+    @Override
     public void
-    setupDataCall(String radioTechnology, String profile, String apn,
-            String user, String password, String authType, String protocol,
+    setupDataCall(int radioTechnology, int profile, String apn,
+            String user, String password, int authType, String protocol,
             Message result) {
         int interfaceId=0;
         RILRequest rr
@@ -275,12 +285,12 @@ public class MT6580 extends RIL implements CommandsInterface {
 
         rr.mParcel.writeInt(8); //bumped by one
 
-        rr.mParcel.writeString(Integer.toString(Integer.parseInt(radioTechnology) + 2));
-        rr.mParcel.writeString(profile);
+        rr.mParcel.writeString(Integer.toString(radioTechnology + 2));
+        rr.mParcel.writeString(Integer.toString(profile));
         rr.mParcel.writeString(apn);
         rr.mParcel.writeString(user);
         rr.mParcel.writeString(password);
-        rr.mParcel.writeString(authType);
+        rr.mParcel.writeString(Integer.toString(authType));
         rr.mParcel.writeString(protocol);
 
         /* Find the first available interfaceId */
@@ -300,7 +310,7 @@ public class MT6580 extends RIL implements CommandsInterface {
         send(rr);
     }
 
-    
+    @Override
     public void
     deactivateDataCall(int cid, int reason, Message result) {
         for (int i=0; i < 4; i++) {
@@ -312,7 +322,7 @@ public class MT6580 extends RIL implements CommandsInterface {
         super.deactivateDataCall(cid, reason, result);
     }
 
-    
+    @Override
     public void
     dial(String address, int clirMode, UUSInfo uusInfo, Message result) {
         if (mEccList.isEmergencyNumberExt(address)) {
@@ -346,7 +356,6 @@ public class MT6580 extends RIL implements CommandsInterface {
             if (RILJ_LOGD) riljLog(rr.serialString() + "> " + localRequestToString(rr.mRequest));
 
             send(rr);
-
         } else {
             super.dial(address, clirMode, uusInfo, result);
         }
@@ -356,7 +365,7 @@ public class MT6580 extends RIL implements CommandsInterface {
         if (mEccList != null) mEccList.updateEmergencyNumbersProperty();
     }
 
-    
+    @Override
     public void
     setRadioPower(boolean on, Message result) {
         boolean isInApm = Settings.Global.getInt(mContext.getContentResolver(),
@@ -383,11 +392,11 @@ public class MT6580 extends RIL implements CommandsInterface {
             super.setRadioPower(on, result);
         }
     }
-
+        
     // Solicited request handling
-    
+    @Override
     protected RILRequest
-    processSolicited (Parcel p) {
+    processSolicited (Parcel p, int type) {
         int serial, error;
         int dataPosition = p.dataPosition(); // save off position within the Parcel
         serial = p.readInt();
@@ -428,7 +437,7 @@ public class MT6580 extends RIL implements CommandsInterface {
             p.setDataPosition(dataPosition);
 
             // Forward responses that we are not overriding to the super class
-            //return super.processSolicited(p);
+            return super.processSolicited(p, type);
         }
 
 
@@ -439,7 +448,7 @@ public class MT6580 extends RIL implements CommandsInterface {
         }
 
         Object ret = null;
-
+        
         if (error == 0 || p.dataAvail() > 0) {
             switch (rr.mRequest) {
                 case RIL_REQUEST_EMERGENCY_DIAL: ret =  responseVoid(p); break;
@@ -496,7 +505,7 @@ public class MT6580 extends RIL implements CommandsInterface {
         return ret;
     }
 
-    
+    @Override
     public void
     iccIOForApp (int command, int fileid, String path, int p1, int p2, int p3,
             String data, String pin2, String aid, Message result) {
@@ -506,5 +515,5 @@ public class MT6580 extends RIL implements CommandsInterface {
         }
         super.iccIOForApp(command, fileid, path, p1, p2, p3, data, pin2, aid, result);
     }
-
+   
 }
